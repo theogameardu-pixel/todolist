@@ -1,13 +1,20 @@
+ codex/generate-windows-to-do-list-application-8ppoi3
 using System.Collections;
 using System.Windows.Media;
 
+
+ main
 namespace TaskFlow.Services;
 
 public class ThemeService
 {
     public bool IsDarkTheme { get; private set; }
 
+ codex/generate-windows-to-do-list-application-8ppoi3
     public void ToggleTheme(IDictionary resources)
+
+    public void ToggleTheme(ResourceDictionary resources)
+ main
     {
         IsDarkTheme = !IsDarkTheme;
 
