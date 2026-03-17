@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -7,58 +6,73 @@ using TaskFlow.Services;
 using TaskFlow.ViewModels;
 using TaskFlow.Views;
 
-namespace TaskFlow
+namespace TaskFlow;
+
+public partial class App : Application
 {
-    public partial class App : Application
+    private readonly IHost _host;
+ codex/generate-windows-to-do-list-application-8ppoi3
+    private IServiceScope? _appScope;
+
+ main
+
+    public App()
     {
-        private readonly IHost _host;
-        private IServiceScope _appScope;
-
-        public App()
-        {
-            _host = Host.CreateDefaultBuilder()
-                .ConfigureServices(delegate(HostBuilderContext context, IServiceCollection services)
-                {
-                    services.AddDbContext<TaskFlowDbContext>();
-                    services.AddScoped<DatabaseService>();
-                    services.AddScoped<TaskService>();
-                    services.AddScoped<ProjectService>();
-                    services.AddSingleton<ThemeService>();
-                    services.AddSingleton<NotificationService>();
-
-                    services.AddSingleton<MainWindow>();
-                    services.AddScoped<MainViewModel>();
-                })
-                .Build();
-        }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            _host.Start();
-
-            _appScope = _host.Services.CreateScope();
-
-            DatabaseService databaseService = _appScope.ServiceProvider.GetRequiredService<DatabaseService>();
-            databaseService.InitializeAsync().GetAwaiter().GetResult();
-
-            MainWindow mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.DataContext = _appScope.ServiceProvider.GetRequiredService<MainViewModel>();
-            mainWindow.Show();
-
-            base.OnStartup(e);
-        }
-
-        protected override void OnExit(ExitEventArgs e)
-        {
-            _host.StopAsync().GetAwaiter().GetResult();
-
-            if (_appScope != null)
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((_, services) =>
             {
-                _appScope.Dispose();
-            }
+                services.AddDbContext<TaskFlowDbContext>();
+ codex/generate-windows-to-do-list-application-8ppoi3
+                services.AddScoped<DatabaseService>();
 
-            _host.Dispose();
-            base.OnExit(e);
-        }
+                services.AddSingleton<DatabaseService>();
+ main
+                services.AddScoped<TaskService>();
+                services.AddScoped<ProjectService>();
+                services.AddSingleton<ThemeService>();
+                services.AddSingleton<NotificationService>();
+
+                services.AddSingleton<MainWindow>();
+ codex/generate-windows-to-do-list-application-8ppoi3
+                services.AddScoped<MainViewModel>();
+
+                services.AddSingleton<MainViewModel>();
+ main
+            })
+            .Build();
+    }
+
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        await _host.StartAsync();
+
+ codex/generate-windows-to-do-list-application-8ppoi3
+        _appScope = _host.Services.CreateScope();
+
+        var databaseService = _appScope.ServiceProvider.GetRequiredService<DatabaseService>();
+        await databaseService.InitializeAsync();
+
+        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.DataContext = _appScope.ServiceProvider.GetRequiredService<MainViewModel>();
+
+        var databaseService = _host.Services.GetRequiredService<DatabaseService>();
+        await databaseService.InitializeAsync();
+
+        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.DataContext = _host.Services.GetRequiredService<MainViewModel>();
+ main
+        mainWindow.Show();
+
+        base.OnStartup(e);
+    }
+
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        await _host.StopAsync();
+ codex/generate-windows-to-do-list-application-8ppoi3
+        _appScope?.Dispose();
+ main
+        _host.Dispose();
+        base.OnExit(e);
     }
 }
