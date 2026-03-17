@@ -75,7 +75,11 @@
                         <DataTemplate DataType="{x:Type models:TaskItem}">
                             <Border Margin="0,0,0,8" Padding="10" BorderBrush="#22000000" BorderThickness="1">
                                 <DockPanel>
+ codex/generate-windows-to-do-list-application-iic5ro
+                                    <CheckBox IsChecked="{Binding IsCompleted, Mode=OneWay}" Command="{Binding DataContext.ToggleTaskStatusCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" Margin="0,0,10,0"/>
+
                                     <CheckBox IsChecked="{Binding IsCompleted}" Command="{Binding DataContext.ToggleTaskStatusCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" Margin="0,0,10,0"/>
+ main
                                     <StackPanel Width="500">
                                         <TextBlock Text="{Binding Title}" FontSize="15" TextDecorations="{Binding Status, Converter={StaticResource StatusToTextDecorationConverter}}"/>
                                         <TextBlock Text="{Binding Description}" Foreground="{DynamicResource MutedBrush}"/>
