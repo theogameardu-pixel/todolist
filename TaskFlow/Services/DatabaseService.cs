@@ -1,20 +1,18 @@
 using TaskFlow.Database;
 
-namespace TaskFlow.Services
+namespace TaskFlow.Services;
+
+public class DatabaseService
 {
+    private readonly TaskFlowDbContext _dbContext;
 
-    public class DatabaseService
+    public DatabaseService(TaskFlowDbContext dbContext)
     {
-        private readonly TaskFlowDbContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public DatabaseService(TaskFlowDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-
-        public async Task InitializeAsync()
-        {
-            await _dbContext.Database.EnsureCreatedAsync();
-        }
+    public async Task InitializeAsync()
+    {
+        await _dbContext.Database.EnsureCreatedAsync();
     }
 }

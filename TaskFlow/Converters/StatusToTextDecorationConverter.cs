@@ -1,23 +1,24 @@
 using System.Globalization;
+ codex/generate-windows-to-do-list-application-8ppoi3
 using System.Windows;
+
+ main
 using System.Windows.Data;
 using TaskFlow.Models;
 
-namespace TaskFlow.Converters
+namespace TaskFlow.Converters;
+
+public class StatusToTextDecorationConverter : IValueConverter
 {
-
-    public class StatusToTextDecorationConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        if (value is TaskStatus status && status == TaskStatus.Completed)
         {
-            if (value is TaskStatus status && status == TaskStatus.Completed)
-            {
-                return TextDecorations.Strikethrough;
-            }
-
-            return null!;
+            return TextDecorations.Strikethrough;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+        return null!;
     }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

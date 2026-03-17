@@ -1,23 +1,21 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using TaskFlow.Models;
 
-namespace TaskFlow.Services
+namespace TaskFlow.Services;
+
+public class NotificationService
 {
-
-    public class NotificationService
+    public void NotifyDue(TaskItem task)
     {
-        public void NotifyDue(TaskItem task)
+        if (task.DueDate is null)
         {
-            if (task.DueDate is null)
-            {
-                return;
-            }
-
-            // Notification Windows native via toast.
-            new ToastContentBuilder()
-                .AddText("TaskFlow - Échéance")
-                .AddText($"La tâche '{task.Title}' arrive à échéance le {task.DueDate:dd/MM/yyyy HH:mm}")
-                .Show();
+            return;
         }
+
+        // Notification Windows native via toast.
+        new ToastContentBuilder()
+            .AddText("TaskFlow - Échéance")
+            .AddText($"La tâche '{task.Title}' arrive à échéance le {task.DueDate:dd/MM/yyyy HH:mm}")
+            .Show();
     }
 }

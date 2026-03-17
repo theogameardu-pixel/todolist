@@ -6,54 +6,73 @@ using TaskFlow.Services;
 using TaskFlow.ViewModels;
 using TaskFlow.Views;
 
-namespace TaskFlow
+namespace TaskFlow;
+
+public partial class App : Application
 {
+    private readonly IHost _host;
+ codex/generate-windows-to-do-list-application-8ppoi3
+    private IServiceScope? _appScope;
 
-    public partial class App : Application
+ main
+
+    public App()
     {
-        private readonly IHost _host;
-        private IServiceScope? _appScope;
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((_, services) =>
+            {
+                services.AddDbContext<TaskFlowDbContext>();
+ codex/generate-windows-to-do-list-application-8ppoi3
+                services.AddScoped<DatabaseService>();
 
-        public App()
-        {
-            _host = Host.CreateDefaultBuilder()
-                .ConfigureServices((_, services) =>
-                {
-                    services.AddDbContext<TaskFlowDbContext>();
-                    services.AddScoped<DatabaseService>();
-                    services.AddScoped<TaskService>();
-                    services.AddScoped<ProjectService>();
-                    services.AddSingleton<ThemeService>();
-                    services.AddSingleton<NotificationService>();
+                services.AddSingleton<DatabaseService>();
+ main
+                services.AddScoped<TaskService>();
+                services.AddScoped<ProjectService>();
+                services.AddSingleton<ThemeService>();
+                services.AddSingleton<NotificationService>();
 
-                    services.AddSingleton<MainWindow>();
-                    services.AddScoped<MainViewModel>();
-                })
-                .Build();
-        }
+                services.AddSingleton<MainWindow>();
+ codex/generate-windows-to-do-list-application-8ppoi3
+                services.AddScoped<MainViewModel>();
 
-        protected override async void OnStartup(StartupEventArgs e)
-        {
-            await _host.StartAsync();
+                services.AddSingleton<MainViewModel>();
+ main
+            })
+            .Build();
+    }
 
-            _appScope = _host.Services.CreateScope();
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        await _host.StartAsync();
 
-            var databaseService = _appScope.ServiceProvider.GetRequiredService<DatabaseService>();
-            await databaseService.InitializeAsync();
+ codex/generate-windows-to-do-list-application-8ppoi3
+        _appScope = _host.Services.CreateScope();
 
-            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-            mainWindow.DataContext = _appScope.ServiceProvider.GetRequiredService<MainViewModel>();
-            mainWindow.Show();
+        var databaseService = _appScope.ServiceProvider.GetRequiredService<DatabaseService>();
+        await databaseService.InitializeAsync();
 
-            base.OnStartup(e);
-        }
+        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.DataContext = _appScope.ServiceProvider.GetRequiredService<MainViewModel>();
 
-        protected override async void OnExit(ExitEventArgs e)
-        {
-            await _host.StopAsync();
-            _appScope?.Dispose();
-            _host.Dispose();
-            base.OnExit(e);
-        }
+        var databaseService = _host.Services.GetRequiredService<DatabaseService>();
+        await databaseService.InitializeAsync();
+
+        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        mainWindow.DataContext = _host.Services.GetRequiredService<MainViewModel>();
+ main
+        mainWindow.Show();
+
+        base.OnStartup(e);
+    }
+
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        await _host.StopAsync();
+ codex/generate-windows-to-do-list-application-8ppoi3
+        _appScope?.Dispose();
+ main
+        _host.Dispose();
+        base.OnExit(e);
     }
 }
